@@ -8,7 +8,7 @@ object Main {
 
   def main(args: Array[String]):Unit = {
     println("This is cron demo!")
-    initCron
+    initCron()
     System.in.read
   }
 
@@ -16,7 +16,7 @@ object Main {
 
     lazy val cron = StdSchedulerFactory.getDefaultScheduler
 
-    val crontask = JobBuilder.newJob(classOf[CronJob]).build
+    val crontask = JobBuilder.newJob(classOf[CronJob]).withIdentity("jobName").build
     val trigger = TriggerBuilder.newTrigger().withSchedule(CronScheduleBuilder.cronSchedule("0 0/1 * * * ?")).build
     cron.start()
     cron.scheduleJob(crontask,trigger)
@@ -26,6 +26,6 @@ object Main {
 
 class CronJob extends Job {
   override def execute(context: JobExecutionContext) = {
-    println("Something happens")
+    println("Something happens " + context.getJobDetail.getKey.getName)
   }
 }
